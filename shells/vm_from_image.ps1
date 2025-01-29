@@ -1,16 +1,12 @@
 Param(
 	[Parameter(Mandatory=$true)][string]$VMName,
 	[Parameter(Mandatory=$true)][string]$InstallMediaPath,
-	[string]$VHDFolder = "C:\ProgramData\Microsoft\Windows\Virtual Hard Disks",
 	[string]$VMSwitch = "Default Switch",
 	[int]$CPUCores = 2,
 	[int]$Memory = 2,
 	[int]$DiskSize = 50,
 	[string]$VHDXType = "D"
 )
-
-# set vhdx file stored pos
-$VHDPath = Join-Path -Path $VHDFolder -ChildPath ($VMName + ".vhdx")
 
 # convert memory and disk size to bytes
 $MemoryBytes = [int]$Memory * 1GB
@@ -32,7 +28,7 @@ if ($VHDXType -eq "D" -or $VHDXType -eq "d") {
 New-VM `
 	-Name $VMName `
 	-MemoryStartupBytes $MemoryBytes `
-	-NewVHDPath $VHDPath `
+	-NewVHDPath ($VMName + ".vhdx") `
 	-NewVHDSizeBytes $DiskSizeBytes `
 	-Generation 2 `
 	-Switch 'Default Switch'
