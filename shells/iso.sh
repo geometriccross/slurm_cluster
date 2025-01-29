@@ -15,8 +15,8 @@ mnt_dir=$(mktemp -d)
 iso_dir=$(mktemp -d)
 
 # mount and copy for edit
-sudo mount -o loop "$origin_iso" "$mnt_dir"
-cp -r "$mnt_dir"/* "$iso_dir"/
+sudo mount -oro,loop "$origin_iso" "$mnt_dir"
+cp -a "$mnt_dir"/* "$iso_dir"/
 sudo umount "$mnt_dir"
 rmdir "$mnt_dir"
 
@@ -25,8 +25,6 @@ sed -i "s|\(linuxefi .*quiet\)|\1 inst.ks=$KS_FILE|" "$iso_dir/EFI/BOOT/grub.cfg
 
 # -as mkisofs
 # 	run in compatible mode
-# -isohybrid-mbr
-# 	isohybrid type output, that can boot from usb memory not only cd/dvd
 # -c
 # 	specify boot catalog file
 # -b
@@ -39,7 +37,6 @@ sed -i "s|\(linuxefi .*quiet\)|\1 inst.ks=$KS_FILE|" "$iso_dir/EFI/BOOT/grub.cfg
 # 	bt this, iso infos can easily access
 xorriso -as mkisofs \
 	-o "$custom_iso" \
-	-isohybrid-mbr /usr/lib/syslinux/isohdpfx.bin \
 	-c isolinux/boot.cat \
 	-b isolinux/isolinux.bin \
 	--no-emul-boot --boot-load-size 4 --boot-info-table \
