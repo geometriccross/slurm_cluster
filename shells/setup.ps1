@@ -1,3 +1,7 @@
+Param(
+	[string]$TailscaleAuthKey
+)
+
 # Enables the WinRM service and sets up the HTTP listener
 Enable-PSRemoting -Force
 
@@ -26,4 +30,12 @@ New-ItemProperty @tokenFilterParams
 
 # Install tailscale
 Invoke-WebRequest 'https://pkgs.tailscale.com/stable/tailscale-setup-latest.exe' -OutFile 'tailscale-setup-latest.exe'
-.\tailscale-setup-latest.exe
+Start-Process -Wait -FilePath .\tailscale-setup-latest.exe
+if ($TailscaleAuthKey) {
+	tailscale up --authkey=$TailscaleAuthKey
+
+} else {
+	tailscale up
+}
+
+Remove-Item 'tailscale-setup-latest.exe'
