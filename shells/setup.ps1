@@ -2,31 +2,30 @@ Param(
 	[string]$TailscaleAuthKey
 )
 
-# Enables the WinRM service and sets up the HTTP listener
-Enable-PSRemoting -Force
+Get-WindowsCapability -Name OpenSSH.Server* -Online |
+    Add-WindowsCapability -Online
+Set-Service -Name sshd -StartupType Automatic -Status Running
 
-# Opens port 5985 for all profiles
 $firewallParams = @{
+    Name        = 'sshd-Server-In-TCP'
+    DisplayName = 'Inbound rule for OpenSSH Server (sshd) on TCP port 22'
     Action      = 'Allow'
-    Description = 'Inbound rule for Windows Remote Management via WS-Management. [TCP 5985]'
     Direction   = 'Inbound'
-    DisplayName = 'Windows Remote Management (HTTP-In)'
-    LocalPort   = 5985
+    Enabled     = 'True'  # This is not a boolean but an enum
     Profile     = 'Any'
     Protocol    = 'TCP'
+    LocalPort   = 22
 }
 New-NetFirewallRule @firewallParams
 
-# Allows local user accounts to be used with WinRM
-# This can be ignored if using domain accounts
-$tokenFilterParams = @{
-    Path         = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System'
-    Name         = 'LocalAccountTokenFilterPolicy'
-    Value        = 1
-    PropertyType = 'DWORD'
+$shellParams = @{
+    Path         = 'HKLM:\SOFTWARE\OpenSSH'
+    Name         = 'DefaultShell'
+    Value        = 'C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe'
+    PropertyType = 'String'
     Force        = $true
 }
-New-ItemProperty @tokenFilterParams
+New-ItemProperty @shellParams
 
 # Install tailscale
 Invoke-WebRequest 'https://pkgs.tailscale.com/stable/tailscale-setup-latest.exe' -OutFile 'tailscale-setup-latest.exe'
