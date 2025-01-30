@@ -14,15 +14,15 @@ $firewallParams = @{
 New-NetFirewallRule @firewallParams
 
 # Allows local user accounts to be used with WinRM
-# This can be uncoment if not using domain accounts
-# $tokenFilterParams = @{
-#     Path         = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System'
-#     Name         = 'LocalAccountTokenFilterPolicy'
-#     Value        = 1
-#     PropertyType = 'DWORD'
-#     Force        = $true
-# }
-# New-ItemProperty @tokenFilterParams
+# This can be ignored if using domain accounts
+$tokenFilterParams = @{
+    Path         = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System'
+    Name         = 'LocalAccountTokenFilterPolicy'
+    Value        = 1
+    PropertyType = 'DWORD'
+    Force        = $true
+}
+New-ItemProperty @tokenFilterParams
 
 # Install tailscale
 Invoke-WebRequest 'https://pkgs.tailscale.com/stable/tailscale-setup-latest.exe' -OutFile 'tailscale-setup-latest.exe'
