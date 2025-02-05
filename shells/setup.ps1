@@ -31,7 +31,7 @@ New-ItemProperty @shellParams
 # Install tailscale
 Invoke-WebRequest 'https://pkgs.tailscale.com/stable/tailscale-setup-latest.exe' -OutFile 'tailscale-setup-latest.exe'
 Start-Process -Wait -FilePath .\tailscale-setup-latest.exe
-if ($null -ne $TailscaleAuthKey) {
+if ([string]::IsNullOrEmpty($TailscaleAuthKey)) {
 	tailscale up --authkey=$TailscaleAuthKey
 } else {
 	tailscale up
@@ -39,7 +39,7 @@ if ($null -ne $TailscaleAuthKey) {
 
 Remove-Item 'tailscale-setup-latest.exe'
 
-if ($null -ne $ControlHostName) {
+if ([string]::IsNullOrEmpty($ControlHostName)) {
 	ssh-keygen -q -t ed25519 -f ~\.ssh\cluster -N ""
 	$pub_key = '~\.ssh\cluster.pub'
 	Get-Content $pub_key | ssh $ControlHostName "@
