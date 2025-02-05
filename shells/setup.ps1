@@ -1,5 +1,5 @@
 Param(
-	[string]$ControlHostName,
+	[string]$SSHUserHost,
 	[string]$TailscaleAuthKey
 )
 
@@ -39,10 +39,10 @@ if ([string]::IsNullOrEmpty($TailscaleAuthKey)) {
 
 Remove-Item 'tailscale-setup-latest.exe'
 
-if ([string]::IsNullOrEmpty($ControlHostName)) {
+if ([string]::IsNullOrEmpty($SSHUserHost)) {
 	ssh-keygen -q -t ed25519 -f ~\.ssh\cluster -N ""
 	$pub_key = '~\.ssh\cluster.pub'
-	Get-Content $pub_key | ssh $ControlHostName "@
+	Get-Content $pub_key | ssh $SSHUserHost "@
 		mkdir -p ~/.ssh \
 			&& chmod 700 ~/.ssh \
 			&& cat >> ~/.ssh/authorized_keys \
