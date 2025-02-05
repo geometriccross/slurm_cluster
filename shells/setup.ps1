@@ -3,8 +3,7 @@ Param(
 	[string]$TailscaleAuthKey
 )
 
-Get-WindowsCapability -Name OpenSSH.Server* -Online |
-	Add-WindowsCapability -Online
+Get-WindowsCapability -Name OpenSSH.Server* -Online | Add-WindowsCapability -Online
 Set-Service -Name sshd -StartupType Automatic -Status Running
 
 $firewallParams = @{
