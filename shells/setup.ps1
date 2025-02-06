@@ -43,7 +43,7 @@ Read-Host -Prompt "Press Enter to continue"
 
 if ([string]::IsNullOrEmpty($SSHUserHost)) {
 	$key_name = ('cluster_' + (HOSTNAME))
-	ssh-keygen -q -t ed25519 -f ('~\.ssh\' + $key_name) -N ""
+	ssh-keygen -q -t ed25519 -f ('~\.ssh\' + $key_name) -N '""'
 	$pub_key = '~\.ssh\cluster.pub'
 	Get-Content $pub_key | ssh $ControllerSSHUserHost -p $ControllerSSHPort "@
 		mkdir -p ~/.ssh \
