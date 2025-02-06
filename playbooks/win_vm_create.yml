@@ -3,3 +3,16 @@
   hosts: win-os
   gather_facts: true
   become: true
+
+  tasks:
+    - name: Download ISO image
+      ansible.builtin.get_url:
+        url: https://download.rockylinux.org/pub/rocky/9/isos/x86_64/Rocky-9.5-x86_64-minimal.iso
+        dest: '.'
+        mode: 'u=rwx, g=r, o=r'
+
+    - name: Donwload ISO script
+      ansible.builtin.get_url:
+        url: https://raw.githubusercontent.com/geometriccross/slurm_cluster/refs/heads/main/shells/iso.sh
+        dest: '.'
+        mode: 'u=rwx, g=r, o=r'
