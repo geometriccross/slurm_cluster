@@ -10,7 +10,7 @@ Set-Service -Name sshd -StartupType Automatic -Status Running
 
 $firewallParams = @{
 	Name        = 'sshd-Server-In-TCP'
-	DisplayName = 'Inbound rule for OpenSSH Server (sshd) on TCP port 22'
+	DisplayName = ('Inbound rule for OpenSSH Server (sshd) on TCP port ' + $NewSSHPort)
 	Action      = 'Allow'
 	Direction   = 'Inbound'
 	Enabled     = 'True'  # This is not a boolean but an enum
