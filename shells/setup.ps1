@@ -47,12 +47,24 @@ if ([string]::IsNullOrEmpty($TailscaleAuthKey)) {
 Remove-Item -Path .\tailscale-setup-latest.exe
 
 if (-not ([string]::IsNullOrEmpty($SSHUserHost))) {
-	$key_name = ('cluster_' + (HOSTNAME))
-	ssh-keygen -q -t ed25519 -f ($env:USERPROFILE + '\.ssh\' + $key_name) -N '""'
-	# publish private key to controller
-	Get-Content $key_name | ssh $ControllerSSHUserHost -p $ControllerSSHPort "@
-		mkdir -p ~/.ssh && chmod 700 ~/.ssh;
-		cat > ~/.ssh/$key_name \
-			&& chmod 600 ~/.ssh/$key_name;
-	"
+	$key_name = ('cluster_' + (HOSTNAME.exe))
+	$tmp_key_path = Join-Path $env:USERPROFILE ".ssh\${key_name}_tmp"
+	$tmp_pubkey_path = "${tmp_key_path}.pub"
+	ssh-keygen -q -t ed25519 -f $tmp_key_path -N '""'
+
+	# pub_key publish
+	Get-Content $tmp_pubkey_path | ssh $SSHUserHost -p $ControllerSSHPort @"
+mkdir -p ~/.ssh && chmod 700 ~/.ssh;
+cat >> ~/.ssh/authorized_keys \
+	&& chmod 600 ~/.ssh/authorized_keys
+
+# key generate for scp
+ssh-keygen -q -t ed25519 -f ~/.ssh/$key_name -N ""
+"@
+
+	scp -P $ControllerSSHPort "${SSHUserHost}:~/.ssh/${key_name}.pub" "${env:USERPROFILE}\.ssh\${key_name}"
+	Get-Content "${env:USERPROFILE}\.ssh\${key_name}" | Out-File -Append -Force "${env:ALLUSERPROFILE}\ssh\administrators_authorized_keys"
+
+	# remove temporary files
+	Remove-Item -Force "${tmp_key_path}" "${tmp_pubkey_path}"
 }
