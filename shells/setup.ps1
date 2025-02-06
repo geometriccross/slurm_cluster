@@ -46,9 +46,8 @@ if ([string]::IsNullOrEmpty($SSHUserHost)) {
 	ssh-keygen -q -t ed25519 -f ('~\.ssh\' + $key_name) -N '""'
 	$pub_key = '~\.ssh\cluster.pub'
 	Get-Content $pub_key | ssh $ControllerSSHUserHost -p $ControllerSSHPort "@
-		mkdir -p ~/.ssh \
-			&& chmod 700 ~/.ssh \
-			&& cat >> ~/.ssh/authorized_keys \
+		mkdir -p ~/.ssh && chmod 700 ~/.ssh;
+		cat >> ~/.ssh/authorized_keys \
 			&& chmod 600 ~/.ssh/authorized_keys
 	"
 }
