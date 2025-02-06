@@ -1,5 +1,5 @@
 Param(
-	[string]$ControllerSSHUserHost,
+	[string]$SSHUserHost,
 	[int]$ControllerSSHPort=22,
 	[int]$NewSSHPort=22,
 	[string]$TailscaleAuthKey
