@@ -7,7 +7,7 @@ Param(
 
 Get-WindowsCapability -Name OpenSSH.Server* -Online | Add-WindowsCapability -Online
 Set-Service -Name sshd -StartupType Automatic -Status Running
-if (not (Test-Path '~\.ssh')) {
+if (-not (Test-Path '~\.ssh')) {
 	New-Item -Type Directory -Path '~\.ssh'
 }
 
@@ -46,7 +46,7 @@ if ([string]::IsNullOrEmpty($TailscaleAuthKey)) {
 
 tailscale up
 
-if ([string]::IsNullOrEmpty($SSHUserHost)) {
+if ($? -and (-not ([string]::IsNullOrEmpty($SSHUserHost)))) {
 	$key_name = ('cluster_' + (HOSTNAME))
 	ssh-keygen -q -t ed25519 -f ($env:USERPROFILE + '\.ssh\' + $key_name) -N '""'
 	$pub_key = '~\.ssh\' + $key_name + '.pub'
