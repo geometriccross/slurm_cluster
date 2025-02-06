@@ -44,10 +44,9 @@ if ([string]::IsNullOrEmpty($TailscaleAuthKey)) {
 	Start-Process -Wait -FilePath "tailscale" -ArgumentList "up"
 }
 
-$login_success = $?
 Remove-Item -Path .\tailscale-setup-latest.exe
 
-if ($login_success -and (-not ([string]::IsNullOrEmpty($SSHUserHost)))) {
+if (-not ([string]::IsNullOrEmpty($SSHUserHost))) {
 	$key_name = ('cluster_' + (HOSTNAME))
 	ssh-keygen -q -t ed25519 -f ($env:USERPROFILE + '\.ssh\' + $key_name) -N '""'
 	$pub_key = '~\.ssh\' + $key_name + '.pub'
