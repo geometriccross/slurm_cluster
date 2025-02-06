@@ -49,10 +49,10 @@ Remove-Item -Path .\tailscale-setup-latest.exe
 if (-not ([string]::IsNullOrEmpty($SSHUserHost))) {
 	$key_name = ('cluster_' + (HOSTNAME))
 	ssh-keygen -q -t ed25519 -f ($env:USERPROFILE + '\.ssh\' + $key_name) -N '""'
-	$pub_key = '~\.ssh\' + $key_name + '.pub'
-	Get-Content $pub_key | ssh $ControllerSSHUserHost -p $ControllerSSHPort "@
+	# publish private key to controller
+	Get-Content $key_name | ssh $ControllerSSHUserHost -p $ControllerSSHPort "@
 		mkdir -p ~/.ssh && chmod 700 ~/.ssh;
-		cat >> ~/.ssh/authorized_keys \
-			&& chmod 600 ~/.ssh/authorized_keys
+		cat > ~/.ssh/$key_name \
+			&& chmod 600 ~/.ssh/$key_name;
 	"
 }
