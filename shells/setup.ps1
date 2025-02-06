@@ -39,6 +39,7 @@ if ([string]::IsNullOrEmpty($TailscaleAuthKey)) {
 }
 
 Remove-Item 'tailscale-setup-latest.exe'
+Read-Host -Prompt "Press Enter to continue"
 
 if ([string]::IsNullOrEmpty($SSHUserHost)) {
 	ssh-keygen -q -t ed25519 -f ~\.ssh\cluster -N ""
