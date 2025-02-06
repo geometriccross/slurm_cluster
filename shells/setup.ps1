@@ -7,6 +7,10 @@ Param(
 
 Get-WindowsCapability -Name OpenSSH.Server* -Online | Add-WindowsCapability -Online
 Set-Service -Name sshd -StartupType Automatic -Status Running
+if (not (Test-Path '~\.ssh')) {
+	New-Item -Type Directory -Path '~\.ssh'
+}
+
 
 $firewallParams = @{
 	Name        = 'sshd-Server-In-TCP'
