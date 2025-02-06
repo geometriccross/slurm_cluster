@@ -1,5 +1,7 @@
 Param(
-	[string]$SSHUserHost,
+	[string]$ControllerSSHUserHost,
+	[int]$ControllerSSHPort=22,
+	[int]$NewSSHPort=22,
 	[string]$TailscaleAuthKey
 )
 
@@ -14,7 +16,7 @@ $firewallParams = @{
 	Enabled     = 'True'  # This is not a boolean but an enum
 	Profile     = 'Any'
 	Protocol    = 'TCP'
-	LocalPort   = 22
+	LocalPort   = $NewSSHPort
 }
 New-NetFirewallRule @firewallParams
 
@@ -41,7 +43,7 @@ Remove-Item 'tailscale-setup-latest.exe'
 if ([string]::IsNullOrEmpty($SSHUserHost)) {
 	ssh-keygen -q -t ed25519 -f ~\.ssh\cluster -N ""
 	$pub_key = '~\.ssh\cluster.pub'
-	Get-Content $pub_key | ssh $SSHUserHost "@
+	Get-Content $pub_key | ssh $ControllerSSHUserHost -p $ControllerSSHPort "@
 		mkdir -p ~/.ssh \
 			&& chmod 700 ~/.ssh \
 			&& cat >> ~/.ssh/authorized_keys \
