@@ -36,14 +36,15 @@ New-ItemProperty @shellParams
 # Install tailscale
 Invoke-WebRequest 'https://pkgs.tailscale.com/stable/tailscale-setup-latest.exe' -OutFile 'tailscale-setup-latest.exe'
 Start-Process -Wait -FilePath .\tailscale-setup-latest.exe
+# this work like "source ~/.bashrc"
+$env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 if ([string]::IsNullOrEmpty($TailscaleAuthKey)) {
-	tailscale up --authkey=$TailscaleAuthKey
+	Start-Process -Wait -FilePath "tailscale" -ArgumentList "up", "--authkey=$TailscaleAuthKey"
 } else {
-	tailscale up
+	Start-Process -Wait -FilePath "tailscale" -ArgumentList "up"
 }
 
-Remove-Item 'tailscale-setup-latest.exe'
-Read-Host -Prompt "Press Enter to continue"
+tailscale up
 
 if ([string]::IsNullOrEmpty($SSHUserHost)) {
 	$key_name = ('cluster_' + (HOSTNAME))
