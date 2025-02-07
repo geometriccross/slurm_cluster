@@ -64,3 +64,6 @@ ssh-keygen -q -t ed25519 -f ~/.ssh/$key_name -N '';
 	Restart-Service sshd
 	Write-Output
 }
+
+# troubleshooting
+# https://zenn.dev/noonworks/scraps/abc67a39c74fd0
