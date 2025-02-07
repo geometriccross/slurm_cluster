@@ -62,7 +62,6 @@ ssh-keygen -q -t ed25519 -f ~/.ssh/$key_name -N '';
 	
 	Write-Output "Port $NewSSHPort" | Out-File -Append -Encoding utf8 "${env:ALLUSERSPROFILE}\ssh\sshd_config"
 	Restart-Service sshd
-	Write-Output
 }
 
 # troubleshooting
