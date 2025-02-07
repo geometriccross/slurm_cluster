@@ -60,7 +60,17 @@ ssh-keygen -q -t ed25519 -f ~/.ssh/$key_name -N '';
 	Get-Content "${env:USERPROFILE}\.ssh\${key_name}.pub" | Out-File -Append -Encoding utf8 "${env:ALLUSERSPROFILE}\ssh\administrators_authorized_keys"
 	icacls.exe "$Env:ProgramData\ssh\administrators_authorized_keys" /inheritance:r /grant "Administrators:F" /grant "SYSTEM:F"
 	
-	Write-Output "Port $NewSSHPort" | Out-File -Append -Encoding utf8 "${env:ALLUSERSPROFILE}\ssh\sshd_config"
+	$sshd_cfg = "${env:ALLUSERSPROFILE}\ssh\sshd_config"
+	$lines = Get-Content -Path $sshd_cfg
+
+	# line 8 is located in Port 22, insert it after port22 line
+	$lineIndex = 9
+	$insertLine = "Port $NewSSHPort"
+	# split before after lines, and put in
+	$newLines = $lines[0..($lineIndex - 1)] + $insertLine + $lines[$lineIndex..($lines.Count - 1)]
+
+	# ReWrite lines
+	$newLines | Set-Content -Encoding utf8 -Path $sshd_cfg
 	Restart-Service sshd
 }
 
