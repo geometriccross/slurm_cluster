@@ -76,3 +76,6 @@ ssh-keygen -q -t ed25519 -f ~/.ssh/$key_name -N '';
 
 # troubleshooting
 # https://zenn.dev/noonworks/scraps/abc67a39c74fd0
+# https://chatgpt.com/c/67a47c89-d80c-8010-b734-7bd6968f8e3c
+# https://chatgpt.com/c/67a5cba3-eed0-8010-8049-0b862227126b
+# https://chatgpt.com/c/67a4cc6e-58b4-8010-94b7-3f49af28be08
