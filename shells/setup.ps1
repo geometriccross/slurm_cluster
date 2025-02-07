@@ -56,13 +56,11 @@ ssh-keygen -q -t ed25519 -f ~/.ssh/$key_name -N '';
 "@ -replace "`r", ""
 	ssh $SSHUserHost -p $ControllerSSHPort -o PreferredAuthentications=password $remote_cmd
 
-# key generate for scp
-ssh-keygen -q -t ed25519 -f ~/.ssh/$key_name -N ""
-"@
-
-	scp -P $ControllerSSHPort "${SSHUserHost}:~/.ssh/${key_name}.pub" "${env:USERPROFILE}\.ssh\${key_name}"
-	Get-Content "${env:USERPROFILE}\.ssh\${key_name}" | Out-File -Append -Force "${env:ALLUSERPROFILE}\ssh\administrators_authorized_keys"
-
-	# remove temporary files
-	Remove-Item -Force "${tmp_key_path}" "${tmp_pubkey_path}"
+	scp -o PreferredAuthentications=password -P $ControllerSSHPort "${SSHUserHost}:~/.ssh/${key_name}.pub" "${env:USERPROFILE}\.ssh\${key_name}.pub"
+	Get-Content "${env:USERPROFILE}\.ssh\${key_name}.pub" | Out-File -Append -Encoding utf8 "${env:ALLUSERSPROFILE}\ssh\administrators_authorized_keys"
+	icacls.exe "$Env:ProgramData\ssh\administrators_authorized_keys" /inheritance:r /grant "Administrators:F" /grant "SYSTEM:F"
+	
+	Write-Output "Port $NewSSHPort" | Out-File -Append -Encoding utf8 "${env:ALLUSERSPROFILE}\ssh\sshd_config"
+	Restart-Service sshd
+	Write-Output
 }
