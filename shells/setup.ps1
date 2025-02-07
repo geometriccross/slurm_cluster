@@ -48,15 +48,13 @@ Remove-Item -Path .\tailscale-setup-latest.exe
 
 if (-not ([string]::IsNullOrEmpty($SSHUserHost))) {
 	$key_name = ('cluster_' + (HOSTNAME.exe))
-	$tmp_key_path = Join-Path $env:USERPROFILE ".ssh\${key_name}_tmp"
-	$tmp_pubkey_path = "${tmp_key_path}.pub"
-	ssh-keygen -q -t ed25519 -f $tmp_key_path -N '""'
 
-	# pub_key publish
-	Get-Content $tmp_pubkey_path | ssh $SSHUserHost -p $ControllerSSHPort @"
+	# convert CR+LF to only LF
+	$remote_cmd = @"
 mkdir -p ~/.ssh && chmod 700 ~/.ssh;
-cat >> ~/.ssh/authorized_keys \
-	&& chmod 600 ~/.ssh/authorized_keys
+ssh-keygen -q -t ed25519 -f ~/.ssh/$key_name -N '';
+"@ -replace "`r", ""
+	ssh $SSHUserHost -p $ControllerSSHPort -o PreferredAuthentications=password $remote_cmd
 
 # key generate for scp
 ssh-keygen -q -t ed25519 -f ~/.ssh/$key_name -N ""
